@@ -1,0 +1,516 @@
+openapi: 3.0.0
+servers: 
+- url: http://localhost:3000/api
+  description: ServidorLocal
+info: 
+  title: Delilah Restó
+  description: API para pedidos de comida deliciosa. Como cliente, podrás registrarte, ver el listado de nuestros productos
+    y realizar una orden. Los administradores del restaurante tienen la oportunidad de recibir pedidos y actualizarlos.
+  version: 1.0.0
+components:
+  schemas:
+    product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        image:
+          type: string
+        name:
+          type: string
+        price:
+          type: integer
+          format: float
+    state:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        fullname:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        address:
+          type: string
+        role:
+          $ref: '#/components/schemas/role'
+        balance:
+          type: integer
+    role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        state:
+          $ref: '#/components/schemas/state'
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
+        payment:
+          $ref: '#/components/schemas/payment'
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            username:
+              type: string
+            fullname:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+            address:
+              type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              producto:
+                $ref: '#/components/schemas/product'
+              amount:
+                type: integer
+tags:
+- name: "product"
+  description: "productos que se pueden comprar"
+- name: "state"
+  description: "estado de los pedidos"
+- name: "payment"
+  description: "metodos de pago para los pedidos"
+- name: "user"
+  description: "informacion del usuario"
+- name: "role"
+  description: "roles disponibles"
+- name: "order"
+  description: "ordenes solicitadas por los clientes"
+paths:
+  /product:
+    get:
+      tags:
+      - "product"
+      summary: Retorna una lista de todos los productos.
+      responses:
+        '200': # status code
+          description: Un array de objetos producto
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/product'
+    post:
+      tags:
+      - "product"
+      summary: Crear nuevo producto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                precio:
+                  type: integer
+                  format: float
+      responses:
+        '200': # status code
+          description: Producto guardado correctamente
+        '400': # status code
+          description: Producto con sintaxis inválida
+    put:
+      tags:
+      - "product"
+      summary: "Actualizar un producto"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+      responses:
+        '200': # status code
+          description: Producto actualizado correctamente
+        '400': # status code
+          description: Producto con sintaxis inválida
+        "404":
+          description: Producto no encontrado
+    delete:
+      tags:
+      - "product"
+      summary: "Eliminar un producto"
+      parameters:
+        - in: query
+          name: prodId
+          description: "ID del producto a eliminar"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': # status code
+          description: Producto eliminado correctamente
+        '400': # status code
+          description: sintaxis de ID invalido
+        "404": # status code
+          description: Producto no encontrado
+  /product/{prodId}:
+    get:
+      tags:
+      - "product"
+      summary: Busca un producto por ID.
+      parameters:
+        - in: path
+          name: prodId
+          description: "ID del producto a buscar"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': # status code
+          description: producto encontrado
+          content:
+            application/json:
+              schema: 
+                properties:
+                  product:
+                    $ref: '#/components/schemas/product'
+        '400': # status code
+          description: sintaxis de ID invalido
+        "404": # status code
+          description: Producto no encontrado
+  /state:
+    get:
+      tags:
+      - "state"
+      summary: Retorna una lista de todos los estados.
+      responses:
+        '200': # status code
+          description: Un array de objetos estado
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/state'
+  /payment:
+    get:
+      tags:
+      - "payment"
+      summary: Retorna una lista de todos los metodos de pago.
+      responses:
+        '200': # status code
+          description: Un array de objetos metodos_pago
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/payment'
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: Crear un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                fullname:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        "200":
+          description: usuario registrado correctamente
+        '400': # status code
+          description: usuario con sintaxis inválida
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: Registra al usuario en el sistema.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Usuario logueado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                  token:
+                    type: string
+        "400":
+          description: Se proporcionó un nombre de usuario/contraseña no válido
+  /user/logout:
+    get:
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      responses:
+        default:
+          description: "successful operation"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: Obtener usuario por username
+      parameters:
+      - in: path
+        name: username
+        description: nombre del usuario que desea buscar
+        required: true
+        schema:
+            type: string
+      responses:
+        "200":
+          description: usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                      balance:
+                        type: integer
+        "400":
+          description: el username suministrado es invalido
+        "404":
+          description: usuario no encontrado
+  /role:
+    get:
+      tags:
+      - "role"
+      summary: Retorna una lista de todos los roles.
+      responses:
+        '200': # status code
+          description: Un array de objetos role
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/role'
+  /order:
+    get:
+      tags:
+      - "order"
+      summary: Retorna una lista de todas las ordenes.
+      responses:
+        '200': # status code
+          description: Un array de objetos order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+    post:
+      tags:
+      - "order"
+      summary: Crear nueva orden.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                description:
+                  type: string
+                payment:
+                  type: integer
+                  format: int64
+                user:
+                  type: integer
+                  format: int64
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id: 
+                        type: integer
+                        format: int64
+                      amount: 
+                        type: integer
+                        format: int64
+      responses:
+        '200': # status code
+          description: Producto guardado correctamente
+        '400': # status code
+          description: Producto con sintaxis inválida
+    put:
+      tags:
+      - "order"
+      summary: "Actualizar estado de una orden"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                state:
+                  type: integer
+                  format: int64
+      responses:
+        '200': # status code
+          description: Orden actualizada correctamente
+        '400': # status code
+          description: Orden con sintaxis inválida
+        "404":
+          description: Orden no encontrada
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,34 @@
 // Conexión a Base de datos
-const mongoose = require('mongoose');
-// const uri = `mongodb+srv://${process.envUSER}:${process.envPASSWORD}@cluster1.grk5y.mongodb.net/${process.envDBNAME}?retryWrites=true&w=majority`;
-const uri = process.env.URI;
+const { Sequelize } = require('sequelize');
+// Importar modelos
+const UserModel = require('./models/User');
+const RoleModel = require('./models/Role');
 
-mongoose
-  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Base de datos conectada'))
-  .catch((e) => console.log('error db:', e));
+const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env;
+
+// Configuración de la conexión a la base de datos
+const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
+    host: DB_HOST,
+    dialect: 'mysql',
+    port: 3306,
+    logging: false,
+});
+
+// modelos de la base de datos
+const Role = RoleModel(sequelize, Sequelize);
+const User = UserModel(sequelize, Sequelize, Role);
+
+// Sincronización de la base de datos
+sequelize
+    .sync({ force: false })
+    .then(() => {
+        console.log('Base de datos cargada');
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+module.exports = {
+    User,
+    Role,
+};

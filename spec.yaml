@@ -111,19 +111,132 @@ components:
               amount:
                 type: integer
 tags:
-- name: "product"
-  description: "productos que se pueden comprar"
-- name: "state"
-  description: "estado de los pedidos"
-- name: "payment"
-  description: "metodos de pago para los pedidos"
 - name: "user"
   description: "informacion del usuario"
-- name: "role"
-  description: "roles disponibles"
+- name: "product"
+  description: "productos que se pueden comprar"
 - name: "order"
   description: "ordenes solicitadas por los clientes"
 paths:
+  /user/register:
+    post:
+      tags:
+      - "user"
+      summary: Crear un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                fullname:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        "200":
+          description: usuario registrado correctamente
+        '400': # status code
+          description: usuario con sintaxis inválida
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: Registra al usuario en el sistema.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Usuario logueado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                  token:
+                    type: string
+        "400":
+          description: Se proporcionó un nombre de usuario/contraseña no válido
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: Obtener usuario por username
+      parameters:
+      - in: path
+        name: username
+        description: nombre del usuario que desea buscar
+        required: true
+        schema:
+            type: string
+      responses:
+        "200":
+          description: usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                      balance:
+                        type: integer
+        "400":
+          description: el username suministrado es invalido
+        "404":
+          description: usuario no encontrado
   /product:
     get:
       tags:
@@ -221,175 +334,6 @@ paths:
           description: sintaxis de ID invalido
         "404": # status code
           description: Producto no encontrado
-  /state:
-    get:
-      tags:
-      - "state"
-      summary: Retorna una lista de todos los estados.
-      responses:
-        '200': # status code
-          description: Un array de objetos estado
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/state'
-  /payment:
-    get:
-      tags:
-      - "payment"
-      summary: Retorna una lista de todos los metodos de pago.
-      responses:
-        '200': # status code
-          description: Un array de objetos metodos_pago
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/payment'
-  /user:
-    post:
-      tags:
-      - "user"
-      summary: Crear un usuario
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                fullname:
-                  type: string
-                email:
-                  type: string
-                phone:
-                  type: string
-                address:
-                  type: string
-      responses:
-        "200":
-          description: usuario registrado correctamente
-        '400': # status code
-          description: usuario con sintaxis inválida
-  /user/login:
-    post:
-      tags:
-      - "user"
-      summary: Registra al usuario en el sistema.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        "200":
-          description: Usuario logueado correctamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  usuario:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        format: int64
-                      username:
-                        type: string
-                      fullname:
-                        type: string
-                      email:
-                        type: string
-                      phone:
-                        type: string
-                      address:
-                        type: string
-                      role:
-                        $ref: '#/components/schemas/role'
-                  token:
-                    type: string
-        "400":
-          description: Se proporcionó un nombre de usuario/contraseña no válido
-  /user/logout:
-    get:
-      tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      responses:
-        default:
-          description: "successful operation"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: Obtener usuario por username
-      parameters:
-      - in: path
-        name: username
-        description: nombre del usuario que desea buscar
-        required: true
-        schema:
-            type: string
-      responses:
-        "200":
-          description: usuario encontrado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        format: int64
-                      username:
-                        type: string
-                      fullname:
-                        type: string
-                      email:
-                        type: string
-                      phone:
-                        type: string
-                      address:
-                        type: string
-                      role:
-                        $ref: '#/components/schemas/role'
-                      balance:
-                        type: integer
-        "400":
-          description: el username suministrado es invalido
-        "404":
-          description: usuario no encontrado
-  /role:
-    get:
-      tags:
-      - "role"
-      summary: Retorna una lista de todos los roles.
-      responses:
-        '200': # status code
-          description: Un array de objetos role
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/role'
   /order:
     get:
       tags:

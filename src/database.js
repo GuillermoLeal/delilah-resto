@@ -6,6 +6,8 @@ const RoleModel = require('./models/Role');
 const StateModel = require('./models/State');
 const PaymentModel = require('./models/Payment');
 const ProductModel = require('./models/Product');
+const OrderModel = require('./models/Order');
+const OrderProductModel = require('./models/OrderProduct');
 
 // Configuración de la conexión a la base de datos
 const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env;
@@ -23,10 +25,18 @@ const User = UserModel(sequelize, Sequelize, Role);
 const State = StateModel(sequelize, Sequelize);
 const Payment = PaymentModel(sequelize, Sequelize);
 const Product = ProductModel(sequelize, Sequelize);
+const Order = OrderModel(sequelize, Sequelize, State, Payment, User);
+const OrderProduct = OrderProductModel(
+    sequelize,
+    Sequelize,
+    State,
+    Payment,
+    User
+);
 
 // Sincronización de la base de datos
 sequelize
-    .sync({ force: false })
+    .sync({ force: true })
     .then(() => {
         console.log('Base de datos cargada');
     })
@@ -40,4 +50,6 @@ module.exports = {
     State,
     Payment,
     Product,
+    Order,
+    OrderProduct,
 };

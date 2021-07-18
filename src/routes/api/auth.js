@@ -8,22 +8,7 @@ const {
 } = require('../../controllers/auth.controller');
 
 // ? Registro de usuario
-router.post('/register', async (req, res) => {
-    // validate user
-    const { error } = validateRegister(req.body);
-
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
-
-    // Validar email y usuario unico
-    const isEmailExist = await User.findOne({
-        where: { email: req.body.email },
-    });
-    if (isEmailExist) {
-        return res.status(400).json({ error: 'Email ya registrado' });
-    }
-
+router.post('/register', validateRegister, async (req, res) => {
     // hash contraseña
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
@@ -46,43 +31,37 @@ router.post('/register', async (req, res) => {
             data: { username, fullname, address, phone, email },
         });
     } catch (error) {
-        res.json(error);
+        res.status(500).json(error);
     }
 });
 
 // ? Login de Usuario
-router.post('/login', async (req, res) => {
-    // validaciones
-    const { error } = validateLogin(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+router.post('/login', validateLogin, async (req, res) => {
+    try {
+        const { user } = req;
+        // create token
+        const token = jwt.sign(
+            {
+                username: user.username,
+                role: user.roleId,
+                id: user._id,
+            },
+            process.env.TOKEN_SECRET
+        );
 
-    const user = await User.findOne({ where: { email: req.body.email } });
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
+        const { username, fullname, address, phone, email } = user;
 
-    const validPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-    );
-    if (!validPassword)
-        return res.status(400).json({ error: 'contraseña no válida' });
-
-    // create token
-    const token = jwt.sign(
-        {
-            username: user.username,
-            id: user._id,
-        },
-        process.env.TOKEN_SECRET
-    );
-
-    const { username, fullname, address, phone, email } = user;
-
-    res.json({
-        error: null,
-        message: 'Usuario logueado correctamente',
-        user: { username, fullname, address, phone, email },
-        token,
-    });
+        res.json({
+            error: null,
+            message: 'Usuario logueado correctamente',
+            user: { username, fullname, address, phone, email },
+            token,
+        });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: error || 'Error al devolver el usuario logueado' });
+    }
 });
 
 module.exports = router;

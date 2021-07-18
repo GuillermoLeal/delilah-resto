@@ -111,132 +111,13 @@ components:
               amount:
                 type: integer
 tags:
-- name: "user"
-  description: "informacion del usuario"
 - name: "product"
   description: "productos que se pueden comprar"
+- name: "user"
+  description: "informacion del usuario"
 - name: "order"
   description: "ordenes solicitadas por los clientes"
 paths:
-  /user/register:
-    post:
-      tags:
-      - "user"
-      summary: Crear un usuario
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                fullname:
-                  type: string
-                email:
-                  type: string
-                phone:
-                  type: string
-                address:
-                  type: string
-      responses:
-        "200":
-          description: usuario registrado correctamente
-        '400': # status code
-          description: usuario con sintaxis inválida
-  /user/login:
-    post:
-      tags:
-      - "user"
-      summary: Registra al usuario en el sistema.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        "200":
-          description: Usuario logueado correctamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        format: int64
-                      username:
-                        type: string
-                      fullname:
-                        type: string
-                      email:
-                        type: string
-                      phone:
-                        type: string
-                      address:
-                        type: string
-                      role:
-                        $ref: '#/components/schemas/role'
-                  token:
-                    type: string
-        "400":
-          description: Se proporcionó un nombre de usuario/contraseña no válido
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: Obtener usuario por username
-      parameters:
-      - in: path
-        name: username
-        description: nombre del usuario que desea buscar
-        required: true
-        schema:
-            type: string
-      responses:
-        "200":
-          description: usuario encontrado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        format: int64
-                      username:
-                        type: string
-                      fullname:
-                        type: string
-                      email:
-                        type: string
-                      phone:
-                        type: string
-                      address:
-                        type: string
-                      role:
-                        $ref: '#/components/schemas/role'
-                      balance:
-                        type: integer
-        "400":
-          description: el username suministrado es invalido
-        "404":
-          description: usuario no encontrado
   /product:
     get:
       tags:
@@ -334,11 +215,141 @@ paths:
           description: sintaxis de ID invalido
         "404": # status code
           description: Producto no encontrado
+  /user/register:
+    post:
+      tags:
+      - "user"
+      summary: Crear un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                fullname:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        "200":
+          description: usuario registrado correctamente
+        '400': # status code
+          description: usuario con sintaxis inválida
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: Registra al usuario en el sistema.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Usuario logueado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                  token:
+                    type: string
+        "400":
+          description: Se proporcionó un nombre de usuario/contraseña no válido
+  /user/{email}:
+    get:
+      tags:
+      - "user"
+      summary: Obtener usuario por email
+      parameters:
+      - in: path
+        name: email
+        description: nombre del usuario que desea buscar
+        required: true
+        schema:
+            type: string
+      responses:
+        "200":
+          description: usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      username:
+                        type: string
+                      fullname:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      address:
+                        type: string
+                      role:
+                        $ref: '#/components/schemas/role'
+                      balance:
+                        type: integer
+        "400":
+          description: el username suministrado es invalido
+        "404":
+          description: usuario no encontrado
   /order:
     get:
       tags:
       - "order"
       summary: Retorna una lista de todas las ordenes.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: La cantidad de elementos que se deben omitir antes de comenzar a recopilar el conjunto de resultados.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: El numero de elementos a retornar
       responses:
         '200': # status code
           description: Un array de objetos order

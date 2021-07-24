@@ -40,14 +40,17 @@ const validateLogin = async (req, res, next) => {
     if (error) return res.status(400).json({ error: error.details[0].message });
 
     const user = await User.findOne({ where: { email: req.body.email } });
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
-
     const validPassword = await bcrypt.compare(
         req.body.password,
         user.password
     );
-    if (!validPassword)
-        return res.status(400).json({ error: 'contraseña no válida' });
+
+    if (!user || !validPassword)
+        return res
+            .status(400)
+            .json({
+                error: 'Credenciales no validas... Por favor verifique los datos',
+            });
 
     req.user = user;
     next();

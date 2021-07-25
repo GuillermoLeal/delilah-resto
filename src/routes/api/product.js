@@ -7,14 +7,14 @@ const {
 
 // ? Obtener todos los productos
 router.get('/', async (req, res) => {
-    const { limit, offset } = req.params;
+    const { limit, offset } = req.query;
 
     const products = await Product.findAll({
         limit: limit || 10,
         offset: offset || 0,
     });
 
-    res.json({ err: null, data: products });
+    res.json({ error: null, data: products });
 });
 
 // ? Obtener producto por id
@@ -23,10 +23,10 @@ router.get('/:id', async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (product == null) {
-        res.status(404).json({ err: 'No existe el producto solicitado' });
+        res.status(404).json({ error: 'No existe el producto solicitado' });
     }
 
-    res.json({ err: null, data: product });
+    res.json({ error: null, data: product });
 });
 
 // ? Agregar un producto
@@ -70,7 +70,9 @@ router.put('/', validateUpdateProduct, async (req, res) => {
         );
 
         if (updateProduct == null) {
-            res.status(404).json({ err: 'No se pudo actualizar el producto' });
+            res.status(404).json({
+                error: 'No se pudo actualizar el producto',
+            });
         }
 
         res.json({
@@ -88,10 +90,10 @@ router.delete('/', async (req, res) => {
         const { id } = req.query;
 
         // delete product
-        const deleteProduct = await Producto.destroy({ where: { id } });
+        const deleteProduct = await Product.destroy({ where: { id } });
 
-        if (deleteProduct == null) {
-            res.status(404).json({ err: 'No se pudo eliminar el producto' });
+        if (!deleteProduct) {
+            res.status(404).json({ error: 'No se pudo eliminar el producto' });
         }
 
         res.json({

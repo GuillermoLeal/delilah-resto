@@ -25,12 +25,12 @@ npm install
 _Luego crea un archivo **.env** con las siquientes variables_
 
 ```
-DB_USER=__usuario mySql__
-DB_PASSWORD=__contraseña mySql__
-DB_DATABASE=__nombre de la base de datos creada__
+DB_USER=usuario mySql
+DB_PASSWORD=contraseña mySql
+DB_DATABASE=nombre de la base de datos creada
 DB_HOST=localhost
-PORT=_Puerto el cual quieres que inicie Node (no es obligatorio)_
-TOKEN_SECRET=__tu token secret para crear los TOKEN__
+PORT=Puerto el cual quieres que inicie Node (no es obligatorio)
+TOKEN_SECRET=tu token secret para crear los TOKEN
 ```
 
 _Ejecuta el siguiente comando para iniciar el servidor node del proyecto_
@@ -43,10 +43,10 @@ npm run start
 npm run dev
 ```
 
-_Deverias estar viendo en consola el siguiente mensaje si todo está correcto:_
+_Deverias estar viendo en consola algo parecido al siguiente mensaje si todo está correcto:_
 
 ```
-Server on port _tu puerto(default: 3000)_!
+Server on port 3000!
 Base de datos cargada
 ```
 

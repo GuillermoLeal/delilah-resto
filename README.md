@@ -37,7 +37,8 @@ DB_DATABASE=delilah_resto
 # Host donde corre la base de datos
 DB_HOST=localhost
 
-# Si esta en true y la base de datos se sincroniza forzadamente entonces se borraran todos los datos
+# Si esta en true y la base de datos se sincroniza forzadamente
+entonces se borraran todos los datos
 DB_FORCE=true
 
 # Puerto donde correra la aplicacion

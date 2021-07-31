@@ -90,7 +90,11 @@ router.post('/', validateOrder, async (req, res) => {
         for (let i = 0; i < products.length; i++) {
             const p = products[i];
             const product = await Product.findByPk(p.id);
-            description += `${p.amount}x${product.name} `;
+            if (!!product) {
+                description += `${p.amount}x${product.name} `;
+            } else {
+                res.status(400).json({ error: 'No existe el producto' });
+            }
         }
         // crear orden
         const order = await Order.create({
@@ -103,10 +107,13 @@ router.post('/', validateOrder, async (req, res) => {
         const orderProducts = [];
         for (let i = 0; i < products.length; i++) {
             const { id, amount } = products[i];
+            const productDB = await Product.findByPk(id);
+
             const product = await OrderProduct.create({
                 orderId: order.id,
                 productId: id,
                 amount: amount,
+                price: productDB.price,
             });
 
             orderProducts.push(product);

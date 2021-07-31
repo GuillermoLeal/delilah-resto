@@ -8,6 +8,11 @@ info:
     y realizar una orden. Los administradores del restaurante tienen la oportunidad de recibir pedidos y actualizarlos.
   version: 1.0.0
 components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     product:
       type: object
@@ -110,6 +115,9 @@ components:
                 $ref: '#/components/schemas/product'
               amount:
                 type: integer
+  responses:
+    UnauthorizedError:
+      description: Token invalido. Debe proverse con el formato Bearer <token>
 tags:
 - name: "product"
   description: "productos que se pueden comprar"
@@ -120,6 +128,8 @@ tags:
 paths:
   /product:
     get:
+      security:
+        - bearerAuth: []
       tags:
       - "product"
       summary: Retorna una lista de todos los productos.
@@ -133,6 +143,8 @@ paths:
                 items: 
                   $ref: '#/components/schemas/product'
     post:
+      security:
+        - bearerAuth: []
       tags:
       - "product"
       summary: Crear nuevo producto.
@@ -151,9 +163,9 @@ paths:
       responses:
         '200': # status code
           description: Producto guardado correctamente
-        '400': # status code
-          description: Producto con sintaxis inválida
     put:
+      security:
+        - bearerAuth: []
       tags:
       - "product"
       summary: "Actualizar un producto"
@@ -166,11 +178,9 @@ paths:
       responses:
         '200': # status code
           description: Producto actualizado correctamente
-        '400': # status code
-          description: Producto con sintaxis inválida
-        "404":
-          description: Producto no encontrado
     delete:
+      security:
+        - bearerAuth: []
       tags:
       - "product"
       summary: "Eliminar un producto"
@@ -185,12 +195,10 @@ paths:
       responses:
         '200': # status code
           description: Producto eliminado correctamente
-        '400': # status code
-          description: sintaxis de ID invalido
-        "404": # status code
-          description: Producto no encontrado
   /product/{prodId}:
     get:
+      security:
+        - bearerAuth: []
       tags:
       - "product"
       summary: Busca un producto por ID.
@@ -211,11 +219,7 @@ paths:
                 properties:
                   product:
                     $ref: '#/components/schemas/product'
-        '400': # status code
-          description: sintaxis de ID invalido
-        "404": # status code
-          description: Producto no encontrado
-  /user/register:
+  /auth/register:
     post:
       tags:
       - "user"
@@ -242,9 +246,7 @@ paths:
       responses:
         "200":
           description: usuario registrado correctamente
-        '400': # status code
-          description: usuario con sintaxis inválida
-  /user/login:
+  /auth/login:
     post:
       tags:
       - "user"
@@ -284,14 +286,15 @@ paths:
                         type: string
                       address:
                         type: string
-                      role:
-                        $ref: '#/components/schemas/role'
+                      roleId:
+                        type: integer
+                        format: int64
                   token:
                     type: string
-        "400":
-          description: Se proporcionó un nombre de usuario/contraseña no válido
   /user/{email}:
     get:
+      security:
+        - bearerAuth: []
       tags:
       - "user"
       summary: Obtener usuario por email
@@ -326,16 +329,13 @@ paths:
                         type: string
                       address:
                         type: string
-                      role:
-                        $ref: '#/components/schemas/role'
-                      balance:
+                      roleId:
                         type: integer
-        "400":
-          description: el username suministrado es invalido
-        "404":
-          description: usuario no encontrado
+                        format: int64
   /order:
     get:
+      security:
+        - bearerAuth: []
       tags:
       - "order"
       summary: Retorna una lista de todas las ordenes.
@@ -355,9 +355,37 @@ paths:
           description: Un array de objetos order
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/order'
+              schema: 
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    description:
+                      type: string
+                    date:
+                      type: string
+                    stateId:
+                      type: integer
+                      format: int64
+                    state:
+                      type: string
+                    userId:
+                      type: integer
+                      format: int64
+                    user:
+                      type: string
+                    address:
+                      type: string
+                    paymentId:
+                      type: integer
+                      format: int64
+                    payment:
+                      type: string
     post:
+      security:
+        - bearerAuth: []
       tags:
       - "order"
       summary: Crear nueva orden.
@@ -368,11 +396,6 @@ paths:
             schema:
               type: object
               properties:
-                date:
-                  type: string
-                  format: date-time
-                description:
-                  type: string
                 payment:
                   type: integer
                   format: int64
@@ -393,9 +416,9 @@ paths:
       responses:
         '200': # status code
           description: Producto guardado correctamente
-        '400': # status code
-          description: Producto con sintaxis inválida
     put:
+      security:
+        - bearerAuth: []
       tags:
       - "order"
       summary: "Actualizar estado de una orden"
@@ -415,11 +438,69 @@ paths:
       responses:
         '200': # status code
           description: Orden actualizada correctamente
-        '400': # status code
-          description: Orden con sintaxis inválida
-        "404":
-          description: Orden no encontrada
-
+  /order/{orderId}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+      - "order"
+      summary: Busca una orden por ID.
+      parameters:
+        - in: path
+          name: orderId
+          description: "ID de la orden a buscar"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': # status code
+          description: producto encontrado
+          content:
+            application/json:
+              schema: 
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  description:
+                    type: string
+                  date:
+                    type: string
+                  stateId:
+                    type: integer
+                    format: int64
+                  state:
+                    type: string
+                  userId:
+                    type: integer
+                    format: int64
+                  user:
+                    type: string
+                  address:
+                    type: string
+                  paymentId:
+                    type: integer
+                    format: int64
+                  payment:
+                    type: string
+                  products:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        name:
+                          type: string
+                        images:
+                          type: string
+                        price:
+                          type: integer
+                          format: int64
+                        amount:
+                          type: integer
+                          format: int64
   
 
 

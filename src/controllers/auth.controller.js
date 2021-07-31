@@ -67,7 +67,6 @@ const validateToken = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
         if (decoded) {
-            console.log(decoded);
             req.auth = decoded;
             return next();
         }

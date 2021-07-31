@@ -3,7 +3,7 @@ const { User } = require('../../database');
 
 router.get('/:email', async (req, res) => {
     try {
-        // get user
+        // obtener usuario
         const user = await User.findOne({ where: { email: req.params.email } });
 
         const { username, fullname, address, phone, email } = user;

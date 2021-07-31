@@ -39,22 +39,22 @@ router.post('/register', validateRegister, async (req, res) => {
 router.post('/login', validateLogin, async (req, res) => {
     try {
         const { user } = req;
-        // create token
+        // crear token
         const token = jwt.sign(
             {
                 username: user.username,
                 role: user.roleId,
-                id: user._id,
+                id: user.id,
             },
             process.env.TOKEN_SECRET
         );
 
-        const { username, fullname, address, phone, email } = user;
+        const { id, username, fullname, address, phone, email, roleId } = user;
 
         res.json({
             error: null,
             message: 'Usuario logueado correctamente',
-            user: { username, fullname, address, phone, email },
+            user: { id, username, fullname, address, phone, email, roleId },
             token,
         });
     } catch (error) {

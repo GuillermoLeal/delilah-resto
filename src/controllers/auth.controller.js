@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { User } = require('../database');
 
@@ -46,17 +47,48 @@ const validateLogin = async (req, res, next) => {
     );
 
     if (!user || !validPassword)
-        return res
-            .status(400)
-            .json({
-                error: 'Credenciales no validas... Por favor verifique los datos',
-            });
+        return res.status(400).json({
+            error: 'Credenciales no validas... Por favor verifique los datos',
+        });
 
     req.user = user;
+    next();
+};
+
+const validateToken = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader)
+            return res.status(401).send({
+                error: "Se debe prover un header 'Authorization' con el formato: 'Bearer <Token>'",
+            });
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+        if (decoded) {
+            console.log(decoded);
+            req.auth = decoded;
+            return next();
+        }
+
+        return res.status(401).json({ error: 'Token invalido' });
+    } catch (err) {
+        return res.status(401).send({
+            error: 'Token invalido. Debe proverse con el formato: "Bearer <token>"',
+        });
+    }
+};
+
+const authorizeRoleAdmin = (req, res, next) => {
+    const { role } = req.auth;
+    if (role !== 1) return res.status(403).send({ error: 'No autorizado' });
     next();
 };
 
 module.exports = {
     validateRegister,
     validateLogin,
+    validateToken,
+    authorizeRoleAdmin,
 };

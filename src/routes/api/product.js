@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Product } = require('../../database');
+const { authorizeRoleAdmin } = require('../../controllers/auth.controller');
 const {
     validateProduct,
     validateUpdateProduct,
@@ -30,9 +31,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // ? Agregar un producto
-router.post('/', validateProduct, async (req, res) => {
+router.post('/', authorizeRoleAdmin, validateProduct, async (req, res) => {
     try {
-        // create product
+        // craar producto
         const product = await Product.create({
             image: req.body.image,
             name: req.body.name,
@@ -51,15 +52,17 @@ router.post('/', validateProduct, async (req, res) => {
 });
 
 // ? Actualizar un producto
-router.put('/', validateUpdateProduct, async (req, res) => {
+router.put('/', authorizeRoleAdmin, validateUpdateProduct, async (req, res) => {
     try {
         const { id, image, name, price } = req.body;
 
         const product = await Product.findByPk(id);
         if (product == null) {
-            res.status(404).json({ err: 'No existe el producto solicitado' });
+            res.status(404).json({
+                err: 'No existe el producto solicitado',
+            });
         }
-        // update product
+        // actualizar producto
         const updateProduct = await Product.update(
             {
                 image: !!image ? image : product.image,
@@ -69,7 +72,7 @@ router.put('/', validateUpdateProduct, async (req, res) => {
             { where: { id } }
         );
 
-        if (updateProduct == null) {
+        if (updateProduct[0] < 1) {
             res.status(404).json({
                 error: 'No se pudo actualizar el producto',
             });
@@ -85,11 +88,11 @@ router.put('/', validateUpdateProduct, async (req, res) => {
 });
 
 // ? Eliminar un producto
-router.delete('/', async (req, res) => {
+router.delete('/', authorizeRoleAdmin, async (req, res) => {
     try {
         const { id } = req.query;
 
-        // delete product
+        // eliminar producto
         const deleteProduct = await Product.destroy({ where: { id } });
 
         if (!deleteProduct) {

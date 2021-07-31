@@ -26,13 +26,7 @@ const State = StateModel(sequelize, Sequelize);
 const Payment = PaymentModel(sequelize, Sequelize);
 const Product = ProductModel(sequelize, Sequelize);
 const Order = OrderModel(sequelize, Sequelize, State, Payment, User);
-const OrderProduct = OrderProductModel(
-    sequelize,
-    Sequelize,
-    State,
-    Payment,
-    User
-);
+const OrderProduct = OrderProductModel(sequelize, Sequelize, Order, Product);
 
 // Sincronización de la base de datos
 sequelize
@@ -45,6 +39,8 @@ sequelize
     });
 
 module.exports = {
+    sequelize,
+    Sequelize,
     User,
     Role,
     State,

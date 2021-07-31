@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes, State, Payment, User) => {
     return sequelize.define(
-        'Order',
+        'order',
         {
             id: {
                 type: DataTypes.INTEGER,

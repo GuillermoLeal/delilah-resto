@@ -10,7 +10,7 @@ const OrderModel = require('./models/Order');
 const OrderProductModel = require('./models/OrderProduct');
 
 // Configuración de la conexión a la base de datos
-const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env;
+const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST, DB_FORCE } = process.env;
 
 const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
     host: DB_HOST,
@@ -30,7 +30,7 @@ const OrderProduct = OrderProductModel(sequelize, Sequelize, Order, Product);
 
 // Sincronización de la base de datos
 sequelize
-    .sync({ force: false })
+    .sync({ force: DB_FORCE })
     .then(() => {
         console.log('Base de datos cargada');
     })

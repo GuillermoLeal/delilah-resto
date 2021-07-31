@@ -25,12 +25,26 @@ npm install
 _Luego crea un archivo **.env** con las siquientes variables_
 
 ```
-DB_USER=usuario mySql
-DB_PASSWORD=contraseña mySql
-DB_DATABASE=nombre de la base de datos creada
+# Nombre de usuario de la base de datos
+DB_USER=your_username
+
+# Contraseña de la base de datos
+DB_PASSWORD=your_password
+
+# Nombre de la base de datos
+DB_DATABASE=delilah_resto
+
+# Host donde corre la base de datos
 DB_HOST=localhost
-PORT=Puerto el cual quieres que inicie Node (no es obligatorio)
-TOKEN_SECRET=tu token secret para crear los TOKEN
+
+# Si esta en true y la base de datos se sincroniza forzadamente entonces se borraran todos los datos
+DB_FORCE=true
+
+# Puerto donde correra la aplicacion
+PORT=4000
+
+# Secreto del JWT a utilizar, puede ser cualquier string
+TOKEN_SECRET=tu_jwt_secret
 ```
 
 _Ejecuta el siguiente comando para iniciar el servidor node del proyecto_
@@ -60,6 +74,6 @@ _Herramientas usadas en el proyecto_
 -   [Sequelize](https://sequelize.org/) - ORM usado para la estructura y consulta a la base de datos
 -   [jsonwebtoken](https://jwt.io/) - Usado para la autenticación
 
-## Wiki 📖
+## Documentacion 📖
 
-Puedes encontrar la documentacion de todas las rutas de la API en el archivo **spect.yaml**, se recomienda abrir el archivo con [swagger](https://editor.swagger.io/#) para mayor claridad.
+La documentación de la API puede encontrarse en el archivo **spec.yaml** presente en el directorio raíz del repositorio., se recomienda abrir el archivo con [swagger](https://editor.swagger.io/#) para mayor claridad.

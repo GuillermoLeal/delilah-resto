@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User } = require('../database');
+const { User, Order } = require('../database');
 
 const validateRegister = async (req, res, next) => {
     const schemaRegister = Joi.object({
@@ -85,9 +85,23 @@ const authorizeRoleAdmin = (req, res, next) => {
     next();
 };
 
+const validateOrderUser = async (req, res, next) => {
+    const { id } = req.auth;
+
+    const orden = await Order.findOne({
+        where: { id: req.params.id, userId: id },
+    });
+    console.log(orden, req.params.id, id);
+    // Si el usuario llama una orden que no le pertenece
+    if (!orden) return res.status(403).send({ error: 'Orden no encontrada' });
+
+    next();
+};
+
 module.exports = {
     validateRegister,
     validateLogin,
     validateToken,
     authorizeRoleAdmin,
+    validateOrderUser,
 };

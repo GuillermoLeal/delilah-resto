@@ -9,14 +9,17 @@ const {
     Payment,
     User,
 } = require('../../database');
-const { authorizeRoleAdmin } = require('../../controllers/auth.controller');
+const {
+    authorizeRoleAdmin,
+    validateOrderUser,
+} = require('../../controllers/auth.controller');
 const {
     validateOrder,
     validateUpdateOrder,
 } = require('../../controllers/order.controller');
 
 // ? Obtener todas las ordenes
-router.get('/', async (req, res) => {
+router.get('/', authorizeRoleAdmin, async (req, res) => {
     const { limit, offset } = req.query;
 
     const orders = await sequelize.query(
@@ -40,7 +43,7 @@ router.get('/', async (req, res) => {
 });
 
 // ? Obtener orden por id
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateOrderUser, async (req, res) => {
     const { id } = req.params;
 
     const order = await sequelize.query(

@@ -30,7 +30,7 @@ const OrderProduct = OrderProductModel(sequelize, Sequelize, Order, Product);
 
 // Sincronización de la base de datos
 sequelize
-    .sync({ force: DB_FORCE })
+    .sync({ force: false })
     .then(() => {
         console.log('Base de datos cargada');
     })

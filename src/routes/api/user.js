@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const { User } = require('../../database');
+const { authorizeRoleAdmin } = require('../../controllers/auth.controller');
 
-router.get('/:email', async (req, res) => {
+// ? Obtener informacion de usuario por el email
+router.get('/:email', authorizeRoleAdmin, async (req, res) => {
     try {
         // obtener usuario
         const user = await User.findOne({ where: { email: req.params.email } });

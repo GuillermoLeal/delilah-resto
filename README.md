@@ -14,7 +14,7 @@ _Tener instalado [NodeJS](https://nodejs.org/en/)_
 
 ### Instalación 🔧
 
-_Primero crea la base de datos e importa los datos del archivo **delilah-resto-data.sql** a la base de datos que creaste_
+_Primero crea la base de datos e importa el archivo **delilah-resto.sql** que se encuentra en la raíz del proyecto a la base de datos que creaste_
 
 _Ejecuta el siguiente comando para instalar las dependencias del proyecto_
 
@@ -22,7 +22,7 @@ _Ejecuta el siguiente comando para instalar las dependencias del proyecto_
 npm install
 ```
 
-_Luego crea un archivo **.env** con las siquientes variables_
+_Luego crea un archivo **.env** con las siquientes variables (Ejemplo de configuracion)_
 
 ```
 # Nombre de usuario de la base de datos

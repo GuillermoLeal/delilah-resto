@@ -39,7 +39,7 @@ DB_HOST=localhost
 
 # Si esta en true y la base de datos se sincroniza forzadamente
 entonces se borraran todos los datos
-DB_FORCE=true
+DB_FORCE=false
 
 # Puerto donde correra la aplicacion
 PORT=4000

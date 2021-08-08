@@ -8,6 +8,12 @@ router.get('/:email', authorizeRoleAdmin, async (req, res) => {
         // obtener usuario
         const user = await User.findOne({ where: { email: req.params.email } });
 
+        if (user == null) {
+            res.status(404).json({
+                error: 'Usuario no encontrado',
+            });
+        }
+
         const { username, fullname, address, phone, email } = user;
 
         res.json({

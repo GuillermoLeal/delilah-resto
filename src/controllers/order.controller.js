@@ -1,35 +1,34 @@
-const Joi = require('@hapi/joi');
+const { User, Payment, State } = require('../database');
 
-const validateOrder = (req, res, next) => {
-    const schemaOrder = Joi.object({
-        payment: Joi.number().positive().required(),
-        user: Joi.number().positive().required(),
-        products: Joi.array()
-            .items(
-                Joi.object({
-                    id: Joi.number().positive().required(),
-                    amount: Joi.number().positive().required(),
-                })
-            )
-            .required(),
-    });
+const validateOrder = async (req, res, next) => {
+    const { payment, user } = req.body;
 
-    const { error } = schemaOrder.validate(req.body);
+    const paymentDb = await Payment.findByPk(payment);
+    if (paymentDb == null) {
+        res.status(404).json({
+            error: 'No existe el metodo de pago ingresado',
+        });
+    }
 
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    const userDb = await User.findByPk(user);
+    if (userDb == null) {
+        res.status(404).json({
+            error: 'No existe el usuario ingresado',
+        });
+    }
 
+    req.userDB = userDb;
+    req.paymentDB = paymentDb;
     next();
 };
 
-const validateUpdateOrder = (req, res, next) => {
-    const schemaOrder = Joi.object({
-        id: Joi.number().positive().required(),
-        state: Joi.number().positive().required(),
-    });
+const validateUpdateOrder = async (req, res, next) => {
+    const { state } = req.body;
 
-    const { error } = schemaOrder.validate(req.body);
-
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    const stateObj = await State.findByPk(state);
+    if (stateObj == null) {
+        res.status(404).json({ error: 'No existe el estado solicitado' });
+    }
 
     next();
 };

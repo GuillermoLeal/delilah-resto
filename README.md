@@ -74,3 +74,13 @@ _Herramientas usadas en el proyecto_
 ## Documentacion 📖
 
 La documentación de la API puede encontrarse en el archivo **spec.yaml** presente en el directorio raíz del repositorio., se recomienda abrir el archivo con [swagger](https://editor.swagger.io/#) para mayor claridad.
+
+Si desea ingresar se tienen 2 usuarios de prueba:
+
+-   **ADMIN**
+    email: admin@gmail.com
+    password: admin123
+
+-   **USER**
+    email: user@gmail.com
+    password: user123

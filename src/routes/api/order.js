@@ -92,6 +92,12 @@ router.post('/', validateOrder, async (req, res) => {
         let description = '';
         for (let i = 0; i < products.length; i++) {
             const p = products[i];
+
+            if (!p.amount || !(p.amount > 0))
+                res.status(400).json({
+                    error: 'Cantidades de productos invalida',
+                });
+
             const product = await Product.findByPk(p.id);
             if (!!product) {
                 description += `${p.amount}x${product.name} `;
@@ -123,8 +129,6 @@ router.post('/', validateOrder, async (req, res) => {
         }
 
         const stateObj = await State.findByPk(order.stateId);
-        const paymentObj = await Payment.findByPk(order.paymentId);
-        const userObj = await User.findByPk(order.userId);
 
         res.json({
             error: null,
@@ -135,14 +139,14 @@ router.post('/', validateOrder, async (req, res) => {
                 stateId: order.stateId,
                 state: stateObj.name,
                 paymentId: order.paymentId,
-                payment: paymentObj.name,
+                payment: req.paymentDB.name,
                 userId: order.userId,
-                user: userObj.fullname,
+                user: req.userDB.fullname,
                 address: userObj.address,
             },
         });
     } catch (error) {
-        return res.status(500).json({ error });
+        res.status(500).json(error);
     }
 });
 
@@ -150,11 +154,6 @@ router.post('/', validateOrder, async (req, res) => {
 router.put('/', authorizeRoleAdmin, validateUpdateOrder, async (req, res) => {
     try {
         const { id, state } = req.body;
-
-        const stateObj = await State.findByPk(state);
-        if (stateObj == null) {
-            res.status(404).json({ error: 'No existe el estado solicitado' });
-        }
         // actualizar orden
         const updateOrder = await Order.update(
             {

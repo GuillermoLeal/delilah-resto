@@ -11,11 +11,27 @@ module.exports = (sequelize, DataTypes, State, Payment, User) => {
                 type: DataTypes.STRING,
                 allowNull: false,
                 defaultValue: '',
+                validate: {
+                    notEmpty: {
+                        args: true,
+                        msg: 'Description es requerido',
+                    },
+                    len: {
+                        args: [1, 100],
+                        msg: 'Description debe tener entre 1 y 100 caracteres',
+                    },
+                },
             },
             date: {
                 type: DataTypes.DATE,
                 allowNull: false,
                 defaultValue: DataTypes.NOW,
+                validate: {
+                    notEmpty: {
+                        args: true,
+                        msg: 'Date es requerido',
+                    },
+                },
             },
             stateId: {
                 type: DataTypes.INTEGER,
@@ -23,6 +39,12 @@ module.exports = (sequelize, DataTypes, State, Payment, User) => {
                 references: {
                     model: State,
                     key: 'id',
+                },
+                validate: {
+                    notEmpty: {
+                        args: true,
+                        msg: 'State es requerido',
+                    },
                 },
             },
             paymentId: {
@@ -32,6 +54,12 @@ module.exports = (sequelize, DataTypes, State, Payment, User) => {
                     model: Payment,
                     key: 'id',
                 },
+                validate: {
+                    notEmpty: {
+                        args: true,
+                        msg: 'Payment es requerido',
+                    },
+                },
             },
             userId: {
                 type: DataTypes.INTEGER,
@@ -39,6 +67,12 @@ module.exports = (sequelize, DataTypes, State, Payment, User) => {
                 references: {
                     model: User,
                     key: 'id',
+                },
+                validate: {
+                    notEmpty: {
+                        args: true,
+                        msg: 'User es requerido',
+                    },
                 },
             },
         },

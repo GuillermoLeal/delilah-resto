@@ -1,10 +1,6 @@
 const router = require('express').Router();
 const { Product } = require('../../database');
 const { authorizeRoleAdmin } = require('../../controllers/auth.controller');
-const {
-    validateProduct,
-    validateUpdateProduct,
-} = require('../../controllers/product.controller');
 
 // ? Obtener todos los productos
 router.get('/', async (req, res) => {
@@ -31,7 +27,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // ? Agregar un producto
-router.post('/', authorizeRoleAdmin, validateProduct, async (req, res) => {
+router.post('/', authorizeRoleAdmin, async (req, res) => {
     try {
         // craar producto
         const product = await Product.create({
@@ -47,12 +43,13 @@ router.post('/', authorizeRoleAdmin, validateProduct, async (req, res) => {
             data: { image, name, price },
         });
     } catch (error) {
-        return res.status(500).json({ error });
+        const errors = error.errors.map((err) => err.message);
+        res.status(500).json({ error: errors });
     }
 });
 
 // ? Actualizar un producto
-router.put('/', authorizeRoleAdmin, validateUpdateProduct, async (req, res) => {
+router.put('/', authorizeRoleAdmin, async (req, res) => {
     try {
         const { id, image, name, price } = req.body;
 
@@ -83,7 +80,8 @@ router.put('/', authorizeRoleAdmin, validateUpdateProduct, async (req, res) => {
             data: 'Producto actualizado correctamente!',
         });
     } catch (error) {
-        return res.status(500).json({ error });
+        const errors = error.errors.map((err) => err.message);
+        res.status(500).json({ error: errors });
     }
 });
 
@@ -104,7 +102,8 @@ router.delete('/', authorizeRoleAdmin, async (req, res) => {
             data: 'Producto eliminado correctamente!',
         });
     } catch (error) {
-        return res.status(500).json({ error });
+        const errors = error.errors.map((err) => err.message);
+        res.status(500).json({ error: errors });
     }
 });
 

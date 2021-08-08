@@ -31,7 +31,8 @@ router.post('/register', validateRegister, async (req, res) => {
             data: { username, fullname, address, phone, email },
         });
     } catch (error) {
-        res.status(500).json(error);
+        const errors = error.errors.map((err) => err.message);
+        res.status(500).json({ error: errors });
     }
 });
 

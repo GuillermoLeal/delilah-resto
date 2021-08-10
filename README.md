@@ -8,21 +8,21 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 
 ### Pre-requisitos 📋
 
-_Tener instalado [MySQL](https://www.mysql.com/), si no lo tienes puedes descargar un paquete como [XAMPP](https://www.apachefriends.org/es/index.html), [WampServer](https://www.wampserver.com/en/) o [MAPM](https://www.mamp.info/en/windows/)_
+Tener instalado [MySQL](https://www.mysql.com/), si no lo tienes puedes descargar un paquete como [XAMPP](https://www.apachefriends.org/es/index.html), [WampServer](https://www.wampserver.com/en/) o [MAPM](https://www.mamp.info/en/windows/)
 
-_Tener instalado [NodeJS](https://nodejs.org/en/)_
+Tener instalado [NodeJS](https://nodejs.org/en/)
 
 ### Instalación 🔧
 
-_Primero crea la base de datos e importa el archivo **delilah-resto.sql** que se encuentra en la raíz del proyecto a la base de datos que creaste_
+Primero crea la base de datos e importa el archivo **delilah-resto.sql** que se encuentra en la raíz del proyecto a la base de datos que creaste
 
-_Ejecuta el siguiente comando para instalar las dependencias del proyecto_
+Ejecuta el siguiente comando para instalar las dependencias del proyecto
 
 ```
 npm install
 ```
 
-_Luego crea un archivo **.env** con las siquientes variables (Ejemplo de configuracion)_
+Luego crea un archivo **.env** con las siquientes variables (Ejemplo de configuracion)
 
 ```
 # Nombre de usuario de la base de datos
@@ -44,7 +44,7 @@ PORT=4000
 TOKEN_SECRET=tu_jwt_secret
 ```
 
-_Ejecuta el siguiente comando para iniciar el servidor node del proyecto_
+Ejecuta el siguiente comando para iniciar el servidor node del proyecto
 
 ```
 npm run start
@@ -54,7 +54,7 @@ npm run start
 npm run dev
 ```
 
-_Deverias estar viendo en consola algo parecido al siguiente mensaje si todo está correcto:_
+Deverias estar viendo en consola algo parecido al siguiente mensaje si todo está correcto:
 
 ```
 Server on port 3000!
@@ -63,7 +63,7 @@ Base de datos cargada
 
 ## Construido con 🛠️
 
-_Herramientas usadas en el proyecto_
+Herramientas usadas en el proyecto\_
 
 -   [NodeJS](https://nodejs.org/en/) - Lenguaje usado en el back-end
 -   [NPM](https://www.npmjs.com/) - Manejador de dependencias
@@ -74,6 +74,8 @@ _Herramientas usadas en el proyecto_
 ## Documentacion 📖
 
 La documentación de la API puede encontrarse en el archivo **spec.yaml** presente en el directorio raíz del repositorio., se recomienda abrir el archivo con [swagger](https://editor.swagger.io/#) para mayor claridad.
+
+Tambien se agregó el archivo **Delilah_Resto.postman_collection.json** con las rutas para importar en POSTMAN
 
 Si desea ingresar se tienen 2 usuarios de prueba:
 

@@ -438,6 +438,23 @@ paths:
       responses:
         '200': # status code
           description: Orden actualizada correctamente
+    delete:
+        security:
+          - bearerAuth: []
+        tags:
+        - "order"
+        summary: "Eliminar una orden"
+        parameters:
+          - in: query
+            name: orderId
+            description: "ID de la orden a eliminar"
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200': # status code
+            description: Orden eliminada correctamente
   /order/{orderId}:
     get:
       security:

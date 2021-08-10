@@ -6,8 +6,6 @@ const {
     Product,
     OrderProduct,
     State,
-    Payment,
-    User,
 } = require('../../database');
 const {
     authorizeRoleAdmin,
@@ -172,6 +170,32 @@ router.put('/', authorizeRoleAdmin, validateUpdateOrder, async (req, res) => {
             error: null,
             data: 'Orden actualizada correctamente!',
         });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+});
+
+// ? Eliminar orden
+router.delete('/', authorizeRoleAdmin, async (req, res) => {
+    try {
+        const { id } = req.query;
+
+        const ordersProduct = await OrderProduct.findAll({
+            where: { orderId: id },
+        });
+
+        for (let i = 0; i < ordersProduct.length; i++) {
+            await OrderProduct.destroy({
+                where: { id: ordersProduct[i].id },
+            });
+        }
+
+        const orderRemoved = await Order.destroy({ where: { id } });
+        if (orderRemoved) {
+            res.send({ error: null, data: 'Orden eliminada' });
+        } else {
+            res.send({ error: 'Orden no encontrada' });
+        }
     } catch (error) {
         return res.status(500).json({ error });
     }
